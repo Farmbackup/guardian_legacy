@@ -98,7 +98,7 @@ defmodule Guardian do
   """
   @spec verify(String.t, Map) :: { :ok, Map } | { :error, atom | String.t }
   def verify(jwt, params) do
-    if verify_issuer?, do: params = Dict.put_new(params, :iss, issuer)
+    if verify_issuer?(), do: params = Dict.put_new(params, :iss, issuer())
 
     try do
       case Joken.decode(jwt, params) do
@@ -144,7 +144,7 @@ defmodule Guardian do
   The configured issuer. If not configured, defaults to the node that issued.
   """
   @spec issuer() :: String.t
-  def issuer, do: config(:issuer, to_string(node))
+  def issuer, do: config(:issuer, to_string(node()))
 
 
   defp verify_claims!(claims, params) do
@@ -157,7 +157,7 @@ defmodule Guardian do
   @doc false
   def config, do: Application.get_env(:guardian, Guardian)
   @doc false
-  def config(key), do: Dict.get(config, key)
+  def config(key), do: Dict.get(config(), key)
   @doc false
-  def config(key, default), do: Dict.get(config, key, default)
+  def config(key, default), do: Dict.get(config(), key, default)
 end

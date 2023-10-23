@@ -7,7 +7,7 @@ defmodule Guardian.Claims do
 
   @doc false
   def app_claims(existing_claims) do
-    Dict.merge(app_claims, Enum.into(existing_claims, %{}))
+    Dict.merge(app_claims(), Enum.into(existing_claims, %{}))
   end
 
   @doc """
@@ -33,7 +33,7 @@ defmodule Guardian.Claims do
   def sub(claims, subject), do: Dict.put(claims, :sub, subject)
 
   @doc false
-  def iat(claims), do: Dict.put(claims, :iat, timestamp)
+  def iat(claims), do: Dict.put(claims, :iat, timestamp())
   @doc false
   def iat(claims, ts), do: Dict.put(claims, :iat, ts)
 
@@ -50,7 +50,7 @@ defmodule Guardian.Claims do
   @doc false
   def ttl(claims = %{iat: iat}, requested_ttl) do
     case { iat, requested_ttl } do
-      { nil, _ } -> Dict.put_new(claims, timestamp + 1_000_000_000)
+      { nil, _ } -> Dict.put_new(claims, timestamp() + 1_000_000_000)
       { iat, { seconds, :seconds } } -> Dict.put(claims, :exp, iat + seconds)
       { iat, { seconds, :second } } -> Dict.put(claims, :exp, iat + seconds)
       { iat, { millis, :millis } } -> Dict.put(claims, :exp, iat + millis / 1000)
